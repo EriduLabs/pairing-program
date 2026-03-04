@@ -77,6 +77,9 @@
 </head>
 <body class="bg-gray-900 font-sans antialiased text-gray-200">
 
+    <!-- Global Datalist for Market Autocomplete -->
+    <datalist id="market-options"></datalist>
+
     <div class="container mx-auto p-4 sm:p-6 lg:p-8 relative">
         <!-- Settings Button -->
         <div class="absolute top-6 right-6 sm:top-10 sm:right-10 z-10">
@@ -163,7 +166,22 @@
                             </label>
                         </div>
                     </div>
-                    <p class="text-gray-400 mb-6">We've pre-loaded the active org-chart Field Trainers (FT1). You can review, edit, remove, or add new ones below.</p>
+
+                    <!-- Market Filter Control -->
+                    <div class="bg-gray-700 p-4 rounded-lg mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
+                        <div>
+                            <h3 class="font-semibold text-white">Visible Markets</h3>
+                            <p class="text-sm text-gray-400" id="visible-markets-text">None</p>
+                        </div>
+                        <div class="flex gap-2 items-center w-full sm:w-auto">
+                            <label for="add-market-filter" class="text-sm text-gray-300 whitespace-nowrap">Add Market:</label>
+                            <select id="add-market-filter" class="w-full sm:w-auto p-2 border border-gray-600 rounded-lg bg-gray-900 text-gray-200 text-sm">
+                                <option value="">-- Select Market --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <p class="text-gray-400 mb-6">Review the available trainers for your active markets. You can add traveling trainers or edit them below.</p>
                     <div id="trainers-list" class="space-y-4"></div>
                     <button id="add-trainer-btn" class="mt-6 bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">+ Add Another Trainer</button>
                 </div>
@@ -237,8 +255,7 @@
             </div>
 
             <!-- Navigation Buttons -->
-            <div class="mt-10 flex justify-between items-center">
-                <button id="clear-data-btn" class="text-sm text-red-500 hover:underline">Clear All Data</button>
+            <div class="mt-10 flex justify-end items-center">
                 <div>
                     <button id="back-btn" class="bg-gray-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-500 transition-colors hidden">Back</button>
                     <button id="next-btn" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors ml-2 hidden">Next</button>
@@ -248,7 +265,7 @@
     </div>
 
     <!-- GLOBAL SETTINGS MODAL -->
-    <div id="global-settings-modal" class="modal-overlay hidden">
+    <div id="global-settings-modal" class="modal-overlay hidden z-50">
         <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-4xl space-y-6 border-2 border-gray-500 relative">
             <button id="close-settings-modal-btn" class="absolute top-4 right-6 text-3xl font-bold text-gray-400 hover:text-white">&times;</button>
             <h2 class="text-2xl font-semibold text-white mb-4 border-b border-gray-700 pb-2">Settings & Data Management</h2>
@@ -284,7 +301,8 @@
                 </div>
             </div>
 
-            <div class="flex justify-end gap-4 pt-4 border-t border-gray-700 mt-4">
+            <div class="flex justify-between items-center pt-4 border-t border-gray-700 mt-4">
+                <button id="clear-data-btn" class="text-sm text-red-500 hover:text-red-400 hover:underline font-semibold" title="Erase all data and start over">⚠️ Clear All Data</button>
                 <button id="apply-settings-btn" class="bg-green-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-700">Apply & Close</button>
             </div>
         </div>
@@ -292,7 +310,7 @@
 
 
     <!-- Modal for adding a new trainee from Dashboard -->
-    <div id="add-trainee-modal" class="modal-overlay hidden">
+    <div id="add-trainee-modal" class="modal-overlay hidden z-50">
         <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-md space-y-6 border-2 border-blue-500">
             <h2 class="text-2xl font-semibold text-center">Add New Trainee</h2>
             <div>
@@ -305,7 +323,7 @@
             </div>
             <div>
                 <label for="new-trainee-market" class="block text-sm font-medium text-gray-300">Market</label>
-                <input type="text" id="new-trainee-market" class="mt-1 w-full p-2 border border-gray-600 rounded-lg bg-gray-900 text-gray-200" placeholder="e.g., SEPA">
+                <input type="text" list="market-options" id="new-trainee-market" class="mt-1 w-full p-2 border border-gray-600 rounded-lg bg-gray-900 text-gray-200" placeholder="e.g., SEPA">
             </div>
             <div class="flex justify-end gap-4 pt-4">
                 <button id="cancel-add-trainee-btn" class="bg-gray-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-500">Cancel</button>
@@ -331,7 +349,7 @@
     </div>
 
     <!-- Reports Calendar Modal -->
-    <div id="reports-calendar-modal" class="modal-overlay hidden">
+    <div id="reports-calendar-modal" class="modal-overlay hidden z-50">
         <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-5xl space-y-6 border-2 border-purple-500 relative">
             <div class="flex justify-between items-center border-b border-gray-700 pb-4">
                 <h2 class="text-2xl font-semibold text-purple-400">Completed Reports & Metrics</h2>
@@ -403,6 +421,7 @@
         let trainers = [];
         let pairings = [];
         let uniqueRegions = [];
+        let visibleMarkets = new Set();
         let calendarDate = new Date();
 
         // --- DOM ELEMENTS ---
@@ -558,6 +577,10 @@
             if (currentStep === 1) {
                 if (inputMethod === 'manual') saveManualTrainees();
                 if (traineeData.length === 0) return alert('Please add at least one trainee or upload a valid file.');
+                
+                // Initialize visible markets based on current trainees
+                visibleMarkets = new Set(traineeData.map(t => t.region));
+                populateTrainersUI();
             }
             if (currentStep === 2) { 
                 saveTrainers(); 
@@ -673,7 +696,6 @@
                             let nameStr = row[nameKey];
                             if (lastKey && row[lastKey]) nameStr += ` ${row[lastKey]}`;
                             if (nameStr && row[marketKey]) {
-                                // Add to trainers array
                                 trainers.push({
                                     id: Date.now() + Math.random(),
                                     name: nameStr.trim(),
@@ -708,7 +730,7 @@
             div.innerHTML = `
                 <div class="flex-1"><label class="block text-sm font-medium text-gray-300">First Name</label><input type="text" class="mt-1 trainee-first-name w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200" placeholder="e.g., John"></div>
                 <div class="flex-1"><label class="block text-sm font-medium text-gray-300">Last Name</label><input type="text" class="mt-1 trainee-last-name w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200" placeholder="e.g., Doe"></div>
-                <div class="flex-1"><label class="block text-sm font-medium text-gray-300">Market</label><input type="text" class="mt-1 trainee-market w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200" placeholder="e.g., SEPA"></div>
+                <div class="flex-1"><label class="block text-sm font-medium text-gray-300">Market</label><input type="text" list="market-options" class="mt-1 trainee-market w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200" placeholder="e.g., SEPA"></div>
                 <button class="remove-manual-trainee-btn bg-red-500 text-white p-2 rounded-full hover:bg-red-600 self-end mb-1"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" /></svg></button>`;
             div.querySelector('.remove-manual-trainee-btn').addEventListener('click', () => div.remove());
             return div;
@@ -739,8 +761,6 @@
                 }
             });
             extractUniqueRegions();
-            populateTrainersUI();
-            populatePairingUI();
         };
 
         const displayDataPreview = (data) => {
@@ -762,11 +782,17 @@
         };
 
         const extractUniqueRegions = () => {
-            const allRegions = new Set(traineeData.map(t => t.region));
+            const allRegions = new Set();
+            traineeData.forEach(t => allRegions.add(t.region));
             trainers.forEach(t => allRegions.add(t.region));
-            // Let's also include default regions just in case they aren't fully represented yet
             defaultTrainers.forEach(t => allRegions.add(t.region)); 
             uniqueRegions = Array.from(allRegions).sort();
+
+            // Populate global datalist
+            const datalist = document.getElementById('market-options');
+            if (datalist) {
+                datalist.innerHTML = uniqueRegions.map(r => `<option value="${r}">`).join('');
+            }
         };
 
         // --- STEP 2: TRAINER MANAGEMENT ---
@@ -774,20 +800,16 @@
             const div = document.createElement('div');
             div.className = `trainer-entry flex items-center space-x-2 ${compact ? 'p-2 bg-gray-900 border border-gray-700' : 'p-4 bg-gray-700'} rounded-lg`;
             div.dataset.id = trainer.id;
-            const regionOptions = uniqueRegions.map(r => `<option value="${r}" ${trainer.region === r ? 'selected' : ''}>${r}</option>`).join('');
-            
-            // Allow arbitrary region in settings just in case
-            const regionHTML = `
-                <input type="text" value="${trainer.region}" class="trainer-region w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200" list="region-options-${trainer.id}" placeholder="Market">
-                <datalist id="region-options-${trainer.id}">${regionOptions}</datalist>
-            `;
 
             div.innerHTML = `
                 <div class="flex-2"><input type="text" value="${trainer.name}" class="trainer-name w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200" placeholder="Trainer Name"></div>
-                <div class="flex-1">${regionHTML}</div>
+                <div class="flex-1"><input type="text" value="${trainer.region}" class="trainer-region w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200" list="market-options" placeholder="Market"></div>
                 <button class="remove-trainer-btn bg-red-500 text-white p-2 rounded hover:bg-red-600"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" /></svg></button>`;
             
-            div.querySelector('.remove-trainer-btn').addEventListener('click', () => div.remove());
+            div.querySelector('.remove-trainer-btn').addEventListener('click', () => {
+                trainers = trainers.filter(t => t.id != trainer.id);
+                div.remove();
+            });
             return div;
         };
 
@@ -795,34 +817,71 @@
             const container = document.getElementById('trainers-list');
             if(!container) return;
             container.innerHTML = '';
-            if (trainers.length > 0) {
-                // sort them by region for a nicer visual layout
-                const sortedTrainers = [...trainers].sort((a,b) => a.region.localeCompare(b.region));
+            
+            // Ensure visibleMarkets has trainee markets initialized
+            traineeData.forEach(t => visibleMarkets.add(t.region));
+
+            // Update UI for Visible Markets Text
+            const visibleText = document.getElementById('visible-markets-text');
+            if (visibleText) {
+                visibleText.textContent = Array.from(visibleMarkets).join(', ') || 'None';
+            }
+
+            // Update Add Market dropdown
+            const filterSelect = document.getElementById('add-market-filter');
+            if (filterSelect) {
+                filterSelect.innerHTML = '<option value="">-- Select Market --</option>';
+                uniqueRegions.forEach(r => {
+                    if (!visibleMarkets.has(r)) {
+                        filterSelect.innerHTML += `<option value="${r}">${r}</option>`;
+                    }
+                });
+            }
+
+            // Render only visible trainers
+            const filteredTrainers = trainers.filter(t => visibleMarkets.has(t.region));
+
+            if (filteredTrainers.length > 0) {
+                const sortedTrainers = [...filteredTrainers].sort((a,b) => a.region.localeCompare(b.region));
                 sortedTrainers.forEach(trainer => container.appendChild(createTrainerInput(trainer, false)));
             } else {
-                container.appendChild(createTrainerInput({id: Date.now(), name: '', region: ''}, false));
+                container.innerHTML = `<p class="text-gray-500 text-center italic mb-4">No trainers found for these markets. You can upload a list or add one manually.</p>`;
             }
         };
+
+        document.getElementById('add-market-filter')?.addEventListener('change', (e) => {
+            if (e.target.value) {
+                saveTrainersFromDOM(document.getElementById('trainers-list')); // Save edits before rerendering
+                visibleMarkets.add(e.target.value);
+                populateTrainersUI(); 
+            }
+        });
 
         addTrainerBtn.addEventListener('click', () => {
             document.getElementById('trainers-list').appendChild(createTrainerInput({id: Date.now(), name: '', region: ''}, false));
         });
         
-        const saveTrainers = () => {
-            // Read from either Step 2 or Settings depending on what's open
-            const lists = [document.getElementById('trainers-list'), document.getElementById('settings-trainers-list')];
-            
-            lists.forEach(list => {
-                if(!list || list.children.length === 0 || list.offsetParent === null) return; // Skip hidden/empty lists
-                trainers = []; // Re-build array
-                list.querySelectorAll('.trainer-entry').forEach(entry => {
-                    const name = entry.querySelector('.trainer-name').value.trim();
-                    const region = entry.querySelector('.trainer-region').value.trim();
-                    if (name && region) {
-                        trainers.push({ id: entry.dataset.id, name, region });
+        const saveTrainersFromDOM = (listElement) => {
+            if (!listElement || listElement.offsetParent === null) return;
+            listElement.querySelectorAll('.trainer-entry').forEach(entry => {
+                const id = entry.dataset.id;
+                const name = entry.querySelector('.trainer-name').value.trim();
+                const region = entry.querySelector('.trainer-region').value.trim();
+                if (name && region) {
+                    let existing = trainers.find(t => t.id == id);
+                    if (existing) {
+                        existing.name = name;
+                        existing.region = region;
+                    } else {
+                        trainers.push({ id, name, region });
                     }
-                });
+                }
             });
+        };
+
+        const saveTrainers = () => {
+            saveTrainersFromDOM(document.getElementById('trainers-list'));
+            saveTrainersFromDOM(document.getElementById('settings-trainers-list'));
             saveDataToLocal();
             populatePairingUI();
         };
@@ -847,7 +906,7 @@
         const renderSettingsData = () => {
             extractUniqueRegions();
             
-            // Render Trainers in settings
+            // Render ALL Trainers in settings
             settingsTrainersList.innerHTML = '';
             const sortedTrainers = [...trainers].sort((a,b) => a.region.localeCompare(b.region));
             sortedTrainers.forEach(t => settingsTrainersList.appendChild(createTrainerInput(t, true)));
@@ -860,7 +919,7 @@
                 div.dataset.id = t.id;
                 div.innerHTML = `
                     <div class="flex-2"><input type="text" value="${t.name}" class="trainee-name w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200 text-sm" placeholder="Trainee Name"></div>
-                    <div class="flex-1"><input type="text" value="${t.region}" class="trainee-region w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200 text-sm" placeholder="Market"></div>
+                    <div class="flex-1"><input type="text" list="market-options" value="${t.region}" class="trainee-region w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200 text-sm" placeholder="Market"></div>
                     <button class="remove-trainee-btn bg-red-500 text-white p-2 rounded hover:bg-red-600"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" /></svg></button>
                 `;
                 div.querySelector('.remove-trainee-btn').addEventListener('click', () => div.remove());
@@ -879,7 +938,7 @@
             div.dataset.id = Math.random().toString(36).substr(2, 9);
             div.innerHTML = `
                 <div class="flex-2"><input type="text" value="" class="trainee-name w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200 text-sm" placeholder="New Trainee Name"></div>
-                <div class="flex-1"><input type="text" value="" class="trainee-region w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200 text-sm" placeholder="Market"></div>
+                <div class="flex-1"><input type="text" list="market-options" value="" class="trainee-region w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200 text-sm" placeholder="Market"></div>
                 <button class="remove-trainee-btn bg-red-500 text-white p-2 rounded hover:bg-red-600"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" /></svg></button>
             `;
             div.querySelector('.remove-trainee-btn').addEventListener('click', () => div.remove());
@@ -929,6 +988,7 @@
             saveDataToLocal();
             
             // Refresh UI
+            visibleMarkets = new Set(traineeData.map(t => t.region));
             populateTrainersUI();
             populatePairingUI();
             if(currentStep === 4) renderCalendar();
