@@ -65,12 +65,30 @@
             justify-content: center;
             z-index: 50;
         }
+        /* Settings Gear Hover */
+        #settings-btn:hover svg {
+            transform: rotate(45deg);
+            transition: transform 0.3s ease;
+        }
+        #settings-btn svg {
+            transition: transform 0.3s ease;
+        }
     </style>
 </head>
 <body class="bg-gray-900 font-sans antialiased text-gray-200">
 
-    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
-        <div class="bg-gray-800 rounded-2xl shadow-xl p-6 sm:p-8 border-4 animated-border">
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8 relative">
+        <!-- Settings Button -->
+        <div class="absolute top-6 right-6 sm:top-10 sm:right-10 z-10">
+            <button id="settings-btn" class="bg-gray-800 p-3 rounded-full shadow-lg border border-gray-600 hover:border-blue-400 text-gray-300 hover:text-white transition-colors" title="Settings & Data Management">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="bg-gray-800 rounded-2xl shadow-xl p-6 sm:p-8 border-4 animated-border relative">
 
             <div class="text-center mb-4">
                 <h1 class="text-3xl font-bold text-yellow-400">The Pairings Guide</h1>
@@ -83,7 +101,6 @@
                 <input type="file" id="load-session-file" class="hidden" accept=".json">
                 <label for="load-session-file" class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors cursor-pointer">Load Session from File</label>
             </div>
-
 
             <!-- Step Indicator -->
             <div id="step-indicators" class="flex justify-center items-center mb-8">
@@ -137,8 +154,16 @@
 
                 <!-- Step 2: Input Trainers -->
                 <div id="step-2" class="guide-step hidden">
-                    <h2 class="text-2xl font-semibold text-gray-200 mb-4">Step 2: Add Trainers & Regions</h2>
-                    <p class="text-gray-400 mb-6">Enter trainer names and select their market/region. This data will be saved in your browser for next time.</p>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-semibold text-gray-200">Step 2: Review Trainers</h2>
+                        <div>
+                            <input type="file" id="trainer-excel-upload" class="hidden" accept=".xlsx, .xls, .csv">
+                            <label for="trainer-excel-upload" class="cursor-pointer bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-700 transition-colors text-sm shadow-md">
+                                📥 Upload Custom List
+                            </label>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 mb-6">We've pre-loaded the active org-chart Field Trainers (FT1). You can review, edit, remove, or add new ones below.</p>
                     <div id="trainers-list" class="space-y-4"></div>
                     <button id="add-trainer-btn" class="mt-6 bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">+ Add Another Trainer</button>
                 </div>
@@ -182,15 +207,32 @@
 
                 <!-- Step 6: Dashboard -->
                  <div id="step-6" class="guide-step hidden">
-                    <div class="flex justify-between items-center mb-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
                         <h2 class="text-2xl font-semibold text-gray-200">Dashboard</h2>
-                        <div class="flex gap-4">
-                            <button id="new-group-btn" class="bg-yellow-500 text-gray-900 font-bold py-2 px-4 rounded-lg hover:bg-yellow-600 transition-colors hidden">Start New Group</button>
-                            <button id="show-reports-calendar-btn" class="bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors">View Reports</button>
-                            <button id="show-add-trainee-modal-btn" class="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">+ Add Trainee</button>
+                        <div class="flex flex-wrap gap-3">
+                            <button id="new-group-btn" class="bg-yellow-500 text-gray-900 font-bold py-2 px-4 rounded-lg hover:bg-yellow-600 transition-colors hidden shadow-md">Start New Group</button>
+                            <button id="show-reports-calendar-btn" class="bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors shadow-md">View Reports & Metrics</button>
+                            <button id="show-add-trainee-modal-btn" class="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition-colors shadow-md">+ Add Trainee</button>
                         </div>
                     </div>
-                    <div id="dashboard-container" class="space-y-8 max-h-[70vh] overflow-y-auto pr-2"></div>
+
+                    <!-- Live Dashboard Metrics -->
+                    <div id="dashboard-quick-metrics" class="grid grid-cols-3 gap-4 mb-6 text-center">
+                        <div class="bg-gray-700 p-3 rounded-lg shadow-inner">
+                            <p class="text-2xl font-bold text-yellow-400" id="metric-active">0</p>
+                            <p class="text-xs text-gray-400 uppercase">Active</p>
+                        </div>
+                        <div class="bg-gray-700 p-3 rounded-lg shadow-inner">
+                            <p class="text-2xl font-bold text-green-400" id="metric-completed">0</p>
+                            <p class="text-xs text-gray-400 uppercase">Completed</p>
+                        </div>
+                        <div class="bg-gray-700 p-3 rounded-lg shadow-inner">
+                            <p class="text-2xl font-bold text-blue-400" id="metric-needs-config">0</p>
+                            <p class="text-xs text-gray-400 uppercase">Need Config</p>
+                        </div>
+                    </div>
+
+                    <div id="dashboard-container" class="space-y-8 max-h-[60vh] overflow-y-auto pr-2"></div>
                 </div>
             </div>
 
@@ -205,7 +247,51 @@
         </div>
     </div>
 
-    <!-- Modal for adding a new trainee -->
+    <!-- GLOBAL SETTINGS MODAL -->
+    <div id="global-settings-modal" class="modal-overlay hidden">
+        <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-4xl space-y-6 border-2 border-gray-500 relative">
+            <button id="close-settings-modal-btn" class="absolute top-4 right-6 text-3xl font-bold text-gray-400 hover:text-white">&times;</button>
+            <h2 class="text-2xl font-semibold text-white mb-4 border-b border-gray-700 pb-2">Settings & Data Management</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Trainers Column -->
+                <div class="space-y-4 border-r border-gray-700 pr-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-blue-400">Trainers Directory</h3>
+                        <div class="flex gap-2">
+                            <button id="restore-default-trainers-btn" class="bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded hover:bg-gray-500" title="Restore Original FT1 Org Chart">🔄 Reset Org</button>
+                            <div>
+                                <input type="file" id="settings-trainer-excel" class="hidden" accept=".xlsx, .xls, .csv">
+                                <label for="settings-trainer-excel" class="cursor-pointer bg-emerald-600 text-white text-xs font-bold py-1 px-2 rounded hover:bg-emerald-700">📥 Upload</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="settings-trainers-list" class="max-h-[40vh] overflow-y-auto space-y-2 pr-2">
+                        <!-- Trainers populated here -->
+                    </div>
+                    <button id="settings-add-trainer-btn" class="w-full bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700 text-sm">+ Add Blank Trainer</button>
+                </div>
+
+                <!-- Trainees Column -->
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-yellow-400">Current Trainees</h3>
+                        <button id="settings-add-trainee-btn" class="bg-yellow-600 text-white text-xs font-bold py-1 px-3 rounded hover:bg-yellow-700">+ Add Trainee</button>
+                    </div>
+                    <div id="settings-trainees-list" class="max-h-[40vh] overflow-y-auto space-y-2 pr-2">
+                        <!-- Trainees populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-4 pt-4 border-t border-gray-700 mt-4">
+                <button id="apply-settings-btn" class="bg-green-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-700">Apply & Close</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal for adding a new trainee from Dashboard -->
     <div id="add-trainee-modal" class="modal-overlay hidden">
         <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-md space-y-6 border-2 border-blue-500">
             <h2 class="text-2xl font-semibold text-center">Add New Trainee</h2>
@@ -229,7 +315,7 @@
     </div>
 
     <!-- Pairing Report Modal -->
-    <div id="pairing-report-modal" class="modal-overlay hidden">
+    <div id="pairing-report-modal" class="modal-overlay hidden z-[60]">
         <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-2xl space-y-6 border-2 border-green-500">
             <div class="flex justify-between items-center">
                 <h2 class="text-2xl font-semibold text-green-400">Pairing Report</h2>
@@ -246,12 +332,18 @@
 
     <!-- Reports Calendar Modal -->
     <div id="reports-calendar-modal" class="modal-overlay hidden">
-        <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-4xl space-y-6 border-2 border-purple-500">
-            <div class="flex justify-between items-center">
-                <h2 class="text-2xl font-semibold text-purple-400">Reports Calendar</h2>
+        <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-5xl space-y-6 border-2 border-purple-500 relative">
+            <div class="flex justify-between items-center border-b border-gray-700 pb-4">
+                <h2 class="text-2xl font-semibold text-purple-400">Completed Reports & Metrics</h2>
                 <button id="close-reports-calendar-btn" class="text-3xl font-bold text-gray-400 hover:text-white">&times;</button>
             </div>
-            <div id="reports-calendar-content" class="space-y-4 max-h-[70vh] overflow-y-auto p-2">
+            
+            <!-- Dashboard Metrics Section inside Reports -->
+            <div id="reports-metrics-container" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <!-- Dynamically injected metrics -->
+            </div>
+
+            <div id="reports-calendar-content" class="space-y-6 max-h-[50vh] overflow-y-auto p-2">
                 <!-- Reports will be listed here -->
             </div>
         </div>
@@ -259,6 +351,51 @@
 
 
     <script>
+        // --- PRESET FT1 ORG CHART TRAINERS ---
+        const defaultTrainers = [
+            { id: 'dt1', name: 'Kevin Hart', region: 'SEPA' },
+            { id: 'dt2', name: 'Amina Blakely', region: 'SEPA' },
+            { id: 'dt3', name: 'John Walsh', region: 'SEPA' },
+            { id: 'dt4', name: 'Arthur Marlin', region: 'SEPA' },
+            { id: 'dt5', name: 'Michelle Aviles', region: 'CPA' },
+            { id: 'dt6', name: 'John Moats', region: 'CPA' },
+            { id: 'dt7', name: 'Jason Tortorici', region: 'CPA' },
+            { id: 'dt8', name: 'Lisa Hoffman', region: 'CPA' },
+            { id: 'dt9', name: 'Antony Richardson', region: 'CPA' },
+            { id: 'dt10', name: 'Reimond Rodriguez', region: 'MD' },
+            { id: 'dt11', name: 'Morgan Yost', region: 'MD' },
+            { id: 'dt12', name: 'James Youmans', region: 'NOVA' },
+            { id: 'dt13', name: 'Jameel Pitt', region: 'NOVA' },
+            { id: 'dt14', name: 'James Gaines', region: 'NOVA' },
+            { id: 'dt15', name: 'Lesha Conoway', region: 'SVA' },
+            { id: 'dt16', name: 'Dallas Hupp', region: 'WPA' },
+            { id: 'dt17', name: 'Jessica Beers', region: 'WPA' },
+            { id: 'dt18', name: 'Aylana Neat', region: 'WPA' },
+            { id: 'dt19', name: 'Alyssa McAfee', region: 'WPA' },
+            { id: 'dt20', name: 'Rodney Homer', region: 'Ohio' },
+            { id: 'dt21', name: 'Jeanine Decker', region: 'WKY' },
+            { id: 'dt22', name: 'Herman Brown', region: 'WNC' },
+            { id: 'dt23', name: 'William Devlin', region: 'WNC' },
+            { id: 'dt24', name: 'Rodney Homer', region: 'WNC' },
+            { id: 'dt25', name: 'Rashaun Henry', region: 'WNC' },
+            { id: 'dt26', name: 'Jamarrius Chavis', region: 'ENC' },
+            { id: 'dt27', name: 'Jamal Graves', region: 'ENC' },
+            { id: 'dt28', name: 'Jacob Hardy', region: 'ENC' },
+            { id: 'dt29', name: 'Jason Ayers', region: 'CLT/USC' },
+            { id: 'dt30', name: 'Patrick Locke', region: 'CLT/USC' },
+            { id: 'dt31', name: 'Dylon Treadway', region: 'CLT/USC' },
+            { id: 'dt32', name: 'Ricky Upkins', region: 'ATL' },
+            { id: 'dt33', name: 'Isaiah McLaughlin', region: 'ATL' },
+            { id: 'dt34', name: 'Djo Paul', region: 'SFL' },
+            { id: 'dt35', name: 'Brian Thompson', region: 'SFL' },
+            { id: 'dt36', name: 'Demarcus Hicks', region: 'CWFL' },
+            { id: 'dt37', name: 'Craig Simer', region: 'CWFL' },
+            { id: 'dt38', name: 'Shak Booze', region: 'CWFL' },
+            { id: 'dt39', name: 'Matthew Rose', region: 'CWFL' },
+            { id: 'dt40', name: 'Viorica Cogar', region: 'CEFL' },
+            { id: 'dt41', name: 'Michael Potter', region: 'CEFL' }
+        ];
+
         // --- STATE MANAGEMENT ---
         let currentStep = 1;
         let inputMethod = ''; // 'upload' or 'manual'
@@ -272,12 +409,26 @@
         const backBtn = document.getElementById('back-btn');
         const nextBtn = document.getElementById('next-btn');
         const fileInput = document.getElementById('excel-file');
+        const trainerFileInput = document.getElementById('trainer-excel-upload');
+        const settingsTrainerFileInput = document.getElementById('settings-trainer-excel');
         const addTrainerBtn = document.getElementById('add-trainer-btn');
         const clearDataBtn = document.getElementById('clear-data-btn');
         const downloadIcsBtn = document.getElementById('download-ics-btn');
         const chooseUploadBtn = document.getElementById('choose-upload-btn');
         const chooseManualBtn = document.getElementById('choose-manual-btn');
         const addManualTraineeBtn = document.getElementById('add-manual-trainee-btn');
+        
+        // Settings elements
+        const settingsBtn = document.getElementById('settings-btn');
+        const globalSettingsModal = document.getElementById('global-settings-modal');
+        const closeSettingsModalBtn = document.getElementById('close-settings-modal-btn');
+        const applySettingsBtn = document.getElementById('apply-settings-btn');
+        const restoreDefaultTrainersBtn = document.getElementById('restore-default-trainers-btn');
+        const settingsTrainersList = document.getElementById('settings-trainers-list');
+        const settingsTraineesList = document.getElementById('settings-trainees-list');
+        const settingsAddTrainerBtn = document.getElementById('settings-add-trainer-btn');
+        const settingsAddTraineeBtn = document.getElementById('settings-add-trainee-btn');
+
         const saveSessionBtn = document.getElementById('save-session-btn');
         const loadSessionFile = document.getElementById('load-session-file');
         const addTraineeModal = document.getElementById('add-trainee-modal');
@@ -300,7 +451,8 @@
             const savedData = localStorage.getItem('pairingsGuideData');
             if (savedData) {
                 const data = JSON.parse(savedData);
-                trainers = data.trainers || [];
+                // Use saved trainers if they exist, otherwise fallback to defaults
+                trainers = (data.trainers && data.trainers.length > 0) ? data.trainers : [...defaultTrainers];
                 pairings = data.pairings || [];
                 traineeData = data.traineeData || [];
                 if (traineeData.length > 0 || pairings.some(p => p.status === 'In Progress')) {
@@ -311,11 +463,14 @@
                     updateGuideUI();
                     document.getElementById('step-indicators').classList.remove('hidden');
                 }
+            } else {
+                trainers = [...defaultTrainers]; // Initial load state
             }
+            extractUniqueRegions();
         };
 
         clearDataBtn.addEventListener('click', () => {
-            if (confirm('DANGER: Are you sure you want to clear ALL data? This will permanently erase all trainers, reports, and current pairings. This action cannot be undone.')) {
+            if (confirm('DANGER: Are you sure you want to clear ALL data? This will permanently erase all reports and current pairings. (Default FT1 trainers will be restored)')) {
                 localStorage.removeItem('pairingsGuideData');
                 location.reload();
             }
@@ -342,7 +497,7 @@
             reader.onload = (e) => {
                 try {
                     const data = JSON.parse(e.target.result);
-                    trainers = data.trainers || [];
+                    trainers = data.trainers || [...defaultTrainers];
                     pairings = data.pairings || [];
                     traineeData = data.traineeData || [];
                     saveDataToLocal();
@@ -442,7 +597,7 @@
             updateGuideUI();
         });
 
-        // --- STEP 1b: DATA INPUT ---
+        // --- TRAINEE EXCEL UPLOAD ---
         fileInput.addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (!file) return;
@@ -458,15 +613,16 @@
                     if (!jsonDataRaw || jsonDataRaw.length === 0) throw new Error('The Excel sheet is empty or contains no data rows.');
 
                     const headers = Object.keys(jsonDataRaw[0]);
-                    const firstKey = headers.find(h => h.trim().toLowerCase() === 'first');
-                    const lastKey = headers.find(h => h.trim().toLowerCase() === 'last');
-                    const marketKey = headers.find(h => h.trim().toLowerCase() === 'market');
+                    const firstKey = headers.find(h => h.trim().toLowerCase().includes('first'));
+                    const lastKey = headers.find(h => h.trim().toLowerCase().includes('last'));
+                    const nameKey = headers.find(h => h.trim().toLowerCase() === 'name');
+                    const marketKey = headers.find(h => h.trim().toLowerCase().includes('market') || h.trim().toLowerCase().includes('region'));
 
-                    if (firstKey && lastKey && marketKey) {
+                    if ((firstKey && lastKey && marketKey) || (nameKey && marketKey)) {
                         traineeData = jsonDataRaw
-                            .filter(row => row[firstKey] && row[lastKey] && row[marketKey])
+                            .filter(row => ((row[firstKey] && row[lastKey]) || row[nameKey]) && row[marketKey])
                             .map(row => ({ 
-                                name: `${row[firstKey]} ${row[lastKey]}`.trim(), 
+                                name: nameKey ? row[nameKey].trim() : `${row[firstKey]} ${row[lastKey]}`.trim(), 
                                 region: row[marketKey],
                                 id: Math.random().toString(36).substr(2, 9) 
                             }))
@@ -480,7 +636,7 @@
                         populatePairingUI();
                         nextBtn.classList.remove('hidden');
                     } else {
-                        throw new Error('Columns "First", "Last", and "MARKET" not found.');
+                        throw new Error('Could not find required columns (First/Last Name or Name, and Market/Region).');
                     }
                 } catch (error) {
                     alert(`Failed to process the file.\n\nError details: ${error.message}`);
@@ -491,6 +647,60 @@
             };
             reader.readAsArrayBuffer(file);
         });
+
+        // --- TRAINER EXCEL UPLOAD ---
+        const handleTrainerUpload = (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const ws = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonDataRaw = XLSX.utils.sheet_to_json(ws);
+
+                    if (!jsonDataRaw || jsonDataRaw.length === 0) throw new Error('Empty sheet.');
+
+                    const headers = Object.keys(jsonDataRaw[0]);
+                    const nameKey = headers.find(h => h.toLowerCase().includes('name') || h.toLowerCase().includes('trainer') || h.toLowerCase().includes('first'));
+                    const lastKey = headers.find(h => h.toLowerCase().includes('last')); // optional
+                    const marketKey = headers.find(h => h.toLowerCase().includes('market') || h.toLowerCase().includes('region'));
+                    
+                    if (nameKey && marketKey) {
+                        let newTrainers = 0;
+                        jsonDataRaw.forEach(row => {
+                            let nameStr = row[nameKey];
+                            if (lastKey && row[lastKey]) nameStr += ` ${row[lastKey]}`;
+                            if (nameStr && row[marketKey]) {
+                                // Add to trainers array
+                                trainers.push({
+                                    id: Date.now() + Math.random(),
+                                    name: nameStr.trim(),
+                                    region: String(row[marketKey]).trim()
+                                });
+                                newTrainers++;
+                            }
+                        });
+                        alert(`Successfully imported ${newTrainers} trainers!`);
+                        extractUniqueRegions();
+                        saveDataToLocal();
+                        populateTrainersUI(); // Update UI if on step 2
+                        renderSettingsData(); // Update settings UI if open
+                    } else {
+                        throw new Error('Could not identify Name and Market columns.');
+                    }
+                } catch(error) {
+                    alert(`Failed to parse trainers: ${error.message}`);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+            event.target.value = ''; // Reset input
+        };
+
+        trainerFileInput.addEventListener('change', handleTrainerUpload);
+        settingsTrainerFileInput.addEventListener('change', handleTrainerUpload);
+
 
         const createManualTraineeInput = () => {
             const div = document.createElement('div');
@@ -554,56 +764,190 @@
         const extractUniqueRegions = () => {
             const allRegions = new Set(traineeData.map(t => t.region));
             trainers.forEach(t => allRegions.add(t.region));
+            // Let's also include default regions just in case they aren't fully represented yet
+            defaultTrainers.forEach(t => allRegions.add(t.region)); 
             uniqueRegions = Array.from(allRegions).sort();
         };
 
         // --- STEP 2: TRAINER MANAGEMENT ---
-        const createTrainerInput = (trainer = { id: Date.now(), name: '', region: '' }) => {
+        const createTrainerInput = (trainer = { id: Date.now(), name: '', region: '' }, compact = false) => {
             const div = document.createElement('div');
-            div.className = 'trainer-entry flex items-center space-x-4 p-4 bg-gray-700 rounded-lg';
+            div.className = `trainer-entry flex items-center space-x-2 ${compact ? 'p-2 bg-gray-900 border border-gray-700' : 'p-4 bg-gray-700'} rounded-lg`;
             div.dataset.id = trainer.id;
             const regionOptions = uniqueRegions.map(r => `<option value="${r}" ${trainer.region === r ? 'selected' : ''}>${r}</option>`).join('');
+            
+            // Allow arbitrary region in settings just in case
+            const regionHTML = `
+                <input type="text" value="${trainer.region}" class="trainer-region w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200" list="region-options-${trainer.id}" placeholder="Market">
+                <datalist id="region-options-${trainer.id}">${regionOptions}</datalist>
+            `;
+
             div.innerHTML = `
-                <div class="flex-1"><label class="block text-sm font-medium text-gray-300">Trainer Name</label><input type="text" value="${trainer.name}" class="mt-1 trainer-name w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200" placeholder="e.g., John Walsh"></div>
-                <div class="flex-1"><label class="block text-sm font-medium text-gray-300">Market/Region</label><select class="mt-1 trainer-region w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200"><option value="">Select Market</option>${regionOptions}</select></div>
-                <button class="remove-trainer-btn bg-red-500 text-white p-2 rounded-full hover:bg-red-600 self-end mb-1"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" /></svg></button>`;
+                <div class="flex-2"><input type="text" value="${trainer.name}" class="trainer-name w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200" placeholder="Trainer Name"></div>
+                <div class="flex-1">${regionHTML}</div>
+                <button class="remove-trainer-btn bg-red-500 text-white p-2 rounded hover:bg-red-600"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" /></svg></button>`;
+            
             div.querySelector('.remove-trainer-btn').addEventListener('click', () => div.remove());
             return div;
         };
 
         const populateTrainersUI = () => {
             const container = document.getElementById('trainers-list');
+            if(!container) return;
             container.innerHTML = '';
             if (trainers.length > 0) {
-                trainers.forEach(trainer => container.appendChild(createTrainerInput(trainer)));
+                // sort them by region for a nicer visual layout
+                const sortedTrainers = [...trainers].sort((a,b) => a.region.localeCompare(b.region));
+                sortedTrainers.forEach(trainer => container.appendChild(createTrainerInput(trainer, false)));
             } else {
-                container.appendChild(createTrainerInput());
+                container.appendChild(createTrainerInput({id: Date.now(), name: '', region: ''}, false));
             }
         };
 
         addTrainerBtn.addEventListener('click', () => {
-            document.getElementById('trainers-list').appendChild(createTrainerInput());
+            document.getElementById('trainers-list').appendChild(createTrainerInput({id: Date.now(), name: '', region: ''}, false));
         });
         
         const saveTrainers = () => {
-            trainers = [];
-            document.querySelectorAll('.trainer-entry').forEach(entry => {
-                const name = entry.querySelector('.trainer-name').value.trim();
-                const region = entry.querySelector('.trainer-region').value;
-                if (name && region) {
-                    trainers.push({ id: entry.dataset.id, name, region });
-                }
+            // Read from either Step 2 or Settings depending on what's open
+            const lists = [document.getElementById('trainers-list'), document.getElementById('settings-trainers-list')];
+            
+            lists.forEach(list => {
+                if(!list || list.children.length === 0 || list.offsetParent === null) return; // Skip hidden/empty lists
+                trainers = []; // Re-build array
+                list.querySelectorAll('.trainer-entry').forEach(entry => {
+                    const name = entry.querySelector('.trainer-name').value.trim();
+                    const region = entry.querySelector('.trainer-region').value.trim();
+                    if (name && region) {
+                        trainers.push({ id: entry.dataset.id, name, region });
+                    }
+                });
             });
             saveDataToLocal();
             populatePairingUI();
         };
 
+        // --- GLOBAL SETTINGS LOGIC ---
+        settingsBtn.addEventListener('click', () => {
+            renderSettingsData();
+            globalSettingsModal.classList.remove('hidden');
+        });
+
+        closeSettingsModalBtn.addEventListener('click', () => {
+            globalSettingsModal.classList.add('hidden');
+        });
+
+        restoreDefaultTrainersBtn.addEventListener('click', () => {
+            if(confirm('Are you sure you want to revert to the default FT1 Org Chart trainers? This will wipe any custom trainers you have added.')){
+                trainers = [...defaultTrainers];
+                renderSettingsData();
+            }
+        });
+
+        const renderSettingsData = () => {
+            extractUniqueRegions();
+            
+            // Render Trainers in settings
+            settingsTrainersList.innerHTML = '';
+            const sortedTrainers = [...trainers].sort((a,b) => a.region.localeCompare(b.region));
+            sortedTrainers.forEach(t => settingsTrainersList.appendChild(createTrainerInput(t, true)));
+            
+            // Render Trainees in settings
+            settingsTraineesList.innerHTML = '';
+            traineeData.forEach(t => {
+                const div = document.createElement('div');
+                div.className = 'trainee-settings-entry flex items-center space-x-2 p-2 bg-gray-900 border border-gray-700 rounded-lg';
+                div.dataset.id = t.id;
+                div.innerHTML = `
+                    <div class="flex-2"><input type="text" value="${t.name}" class="trainee-name w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200 text-sm" placeholder="Trainee Name"></div>
+                    <div class="flex-1"><input type="text" value="${t.region}" class="trainee-region w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200 text-sm" placeholder="Market"></div>
+                    <button class="remove-trainee-btn bg-red-500 text-white p-2 rounded hover:bg-red-600"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" /></svg></button>
+                `;
+                div.querySelector('.remove-trainee-btn').addEventListener('click', () => div.remove());
+                settingsTraineesList.appendChild(div);
+            });
+        };
+
+        settingsAddTrainerBtn.addEventListener('click', () => {
+            settingsTrainersList.appendChild(createTrainerInput({id: Date.now(), name: '', region: ''}, true));
+            settingsTrainersList.scrollTop = settingsTrainersList.scrollHeight; // Scroll to bottom
+        });
+
+        settingsAddTraineeBtn.addEventListener('click', () => {
+            const div = document.createElement('div');
+            div.className = 'trainee-settings-entry flex items-center space-x-2 p-2 bg-gray-900 border border-gray-700 rounded-lg';
+            div.dataset.id = Math.random().toString(36).substr(2, 9);
+            div.innerHTML = `
+                <div class="flex-2"><input type="text" value="" class="trainee-name w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200 text-sm" placeholder="New Trainee Name"></div>
+                <div class="flex-1"><input type="text" value="" class="trainee-region w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200 text-sm" placeholder="Market"></div>
+                <button class="remove-trainee-btn bg-red-500 text-white p-2 rounded hover:bg-red-600"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" /></svg></button>
+            `;
+            div.querySelector('.remove-trainee-btn').addEventListener('click', () => div.remove());
+            settingsTraineesList.appendChild(div);
+            settingsTraineesList.scrollTop = settingsTraineesList.scrollHeight;
+        });
+
+        applySettingsBtn.addEventListener('click', () => {
+            // Save Trainers
+            saveTrainers(); 
+
+            // Save Trainees
+            const newTraineeData = [];
+            settingsTraineesList.querySelectorAll('.trainee-settings-entry').forEach(entry => {
+                const name = entry.querySelector('.trainee-name').value.trim();
+                const region = entry.querySelector('.trainee-region').value.trim();
+                if (name && region) {
+                    newTraineeData.push({ id: entry.dataset.id, name, region });
+                }
+            });
+            traineeData = newTraineeData;
+
+            // Sync Pairings: Add missing, keep existing, remove deleted
+            const updatedPairings = [];
+            traineeData.forEach(t => {
+                const existing = pairings.find(p => p.id === t.id);
+                if (existing) {
+                    existing.traineeName = t.name;
+                    existing.region = t.region;
+                    updatedPairings.push(existing);
+                } else {
+                    updatedPairings.push({
+                        id: t.id, traineeName: t.name, region: t.region,
+                        trainerName: '', order: '', startDate: '', duration: 2, notes: '', status: 'In Progress'
+                    });
+                }
+            });
+            // Keep completed/failed pairings even if trainee was removed from active list
+            pairings.forEach(p => {
+                if ((p.status === 'Passed' || p.status === 'Failed') && !updatedPairings.find(up => up.id === p.id)) {
+                    updatedPairings.push(p);
+                }
+            });
+            pairings = updatedPairings;
+
+            extractUniqueRegions();
+            saveDataToLocal();
+            
+            // Refresh UI
+            populateTrainersUI();
+            populatePairingUI();
+            if(currentStep === 4) renderCalendar();
+            if(currentStep === 6) renderDashboard();
+            
+            globalSettingsModal.classList.add('hidden');
+        });
+
         // --- STEP 3: PAIRING LOGIC ---
         const populatePairingUI = () => {
             const container = document.getElementById('pairing-container');
+            if(!container) return;
             container.innerHTML = (traineeData.length === 0) ? `<p class="text-gray-500 text-center">Upload or enter trainee data in Step 1.</p>` : '';
+            
             traineeData.forEach(trainee => {
                 const existingPairing = pairings.find(p => p.id === trainee.id) || {};
+                // Only configure active pairings
+                if (existingPairing.status === 'Passed' || existingPairing.status === 'Failed') return;
+
                 const trainersInRegion = trainers.filter(t => t.region === trainee.region);
                 const trainerOptions = trainersInRegion.map(t => `<option value="${t.name}" ${existingPairing.trainerName === t.name ? 'selected' : ''}>${t.name}</option>`).join('');
                 const div = document.createElement('div');
@@ -612,7 +956,7 @@
                 div.innerHTML = `
                     <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
                         <div><p class="font-bold text-lg text-yellow-400">${trainee.name}</p><p class="text-sm text-gray-400">${trainee.region}</p></div>
-                        <div><label class="block text-sm font-medium text-gray-300">Assign Trainer</label><select class="pairing-trainer-select mt-1 w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200" ${trainersInRegion.length === 0 ? 'disabled' : ''}><option value="">${trainersInRegion.length === 0 ? 'No trainers' : 'Select trainer'}</option>${trainerOptions}</select></div>
+                        <div><label class="block text-sm font-medium text-gray-300">Assign Trainer</label><select class="pairing-trainer-select mt-1 w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200" ${trainersInRegion.length === 0 ? 'disabled' : ''}><option value="">${trainersInRegion.length === 0 ? 'No trainers added' : 'Select trainer'}</option>${trainerOptions}</select></div>
                         <div><label class="block text-sm font-medium text-gray-300">Order #</label><input type="text" class="pairing-order-input mt-1 w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200" placeholder="e.g. 632261" value="${existingPairing.order || ''}"></div>
                         <div><label class="block text-sm font-medium text-gray-300">Start Date</label><input type="date" class="pairing-start-date mt-1 w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200" value="${existingPairing.startDate || ''}"></div>
                         <div><label class="block text-sm font-medium text-gray-300">Training Days</label><input type="number" class="pairing-duration-days mt-1 w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-gray-200" value="${existingPairing.duration || 2}" min="1"></div>
@@ -645,6 +989,7 @@
         // --- STEP 4: CALENDAR ---
         const renderCalendar = () => {
             const gridBody = document.getElementById('calendar-grid-body');
+            if(!gridBody) return;
             gridBody.innerHTML = '';
             const month = calendarDate.getMonth();
             const year = calendarDate.getFullYear();
@@ -662,7 +1007,7 @@
                 const currentDate = new Date(year, month, day);
 
                 pairings.forEach(p => {
-                    if (!p.startDate) return;
+                    if (!p.startDate || p.status !== 'In Progress') return;
                     const trainingDates = getTrainingDates(p.startDate, p.duration);
                     if (trainingDates.some(d => d.getTime() === currentDate.getTime())) {
                         const eventDiv = document.createElement('div');
@@ -685,6 +1030,7 @@
         // --- STEP 5: POST GENERATION & EXPORT ---
         const generatePostsByRegion = () => {
             const container = document.getElementById('posts-container');
+            if(!container) return;
             container.innerHTML = '';
             
             const validPairings = pairings.filter(p => p.trainerName && p.startDate && p.order && p.status === 'In Progress');
@@ -719,7 +1065,7 @@
                     });
                     postContent += "\n";
                 });
-                postContent += "Please let me know if you need additional time beyond what is currently scheduled with your trainees.  Thank you everyone! �";
+                postContent += "Please let me know if you need additional time beyond what is currently scheduled with your trainees.  Thank you everyone! 🙂";
                 
                 const postDiv = document.createElement('div');
                 const uniqueId = `post-output-${region.replace(/\s/g, '')}`;
@@ -760,8 +1106,8 @@
         };
         
         const generateICSFile = () => {
-            const validPairings = pairings.filter(p => p.startDate);
-            if (validPairings.length === 0) return alert("Please create some pairings with start dates first.");
+            const validPairings = pairings.filter(p => p.startDate && p.status === 'In Progress');
+            if (validPairings.length === 0) return alert("Please create some active pairings with start dates first.");
 
             let icsContent = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//PairingsGuide//EN'];
 
@@ -805,17 +1151,30 @@
             }
         });
 
+        // --- DASHBOARD LIVE METRICS UPDATE ---
+        const updateDashboardMetrics = () => {
+            const activePairings = pairings.filter(p => p.status === 'In Progress' && p.startDate && p.trainerName);
+            const needConfig = pairings.filter(p => p.status === 'In Progress' && (!p.startDate || !p.trainerName));
+            const completed = pairings.filter(p => p.status === 'Passed' || p.status === 'Failed');
+            
+            document.getElementById('metric-active').textContent = activePairings.length;
+            document.getElementById('metric-completed').textContent = completed.length;
+            document.getElementById('metric-needs-config').textContent = needConfig.length;
+        };
+
         // --- STEP 6: DASHBOARD ---
         const renderDashboard = () => {
             const container = document.getElementById('dashboard-container');
+            if(!container) return;
             container.innerHTML = '';
+            updateDashboardMetrics();
             
             const activePairings = pairings.filter(p => p.status === 'In Progress');
+            
             if (pairings.length === 0) {
                 container.innerHTML = `<p class="text-gray-500 text-center">No pairings to display. Get started by adding trainees.</p>`;
-            }
-            if (activePairings.length === 0 && pairings.length > 0) {
-                 container.innerHTML = `<p class="text-gray-400 text-center py-4">All pairings for this group are complete. You can start a new group or view old reports.</p>`;
+            } else if (activePairings.length === 0) {
+                 container.innerHTML = `<p class="text-gray-400 text-center py-4 bg-gray-800 rounded-lg border border-gray-700 shadow-inner">🎉 All pairings for this group are complete! You can start a new group or view old reports.</p>`;
             }
 
             const pairingsByRegion = [...activePairings]
@@ -850,14 +1209,14 @@
 
                         let statusUI = `
                             <div class="flex items-center gap-2">
-                                <button data-pairing-id="${p.id}" class="pass-btn bg-green-500 text-white px-3 py-1 text-sm rounded-md hover:bg-green-600">Pass</button>
-                                <button data-pairing-id="${p.id}" class="fail-btn bg-red-500 text-white px-3 py-1 text-sm rounded-md hover:bg-red-600">Fail</button>
+                                <button data-pairing-id="${p.id}" class="pass-btn bg-green-500 text-white px-3 py-1 text-sm rounded-md hover:bg-green-600 transition">Pass</button>
+                                <button data-pairing-id="${p.id}" class="fail-btn bg-red-500 text-white px-3 py-1 text-sm rounded-md hover:bg-red-600 transition">Fail</button>
                             </div>`;
                         
                         let actionButtons = `<div class="flex items-center gap-2">`;
-                        actionButtons += `<button data-pairing-id="${p.id}" class="extend-day-btn bg-blue-600 text-white px-3 py-1 text-sm rounded-md hover:bg-blue-700">+ Extend 1 Day</button>`;
+                        actionButtons += `<button data-pairing-id="${p.id}" class="extend-day-btn bg-blue-600 text-white px-3 py-1 text-sm rounded-md hover:bg-blue-700 transition">+ Extend 1 Day</button>`;
                         if (isFinished) {
-                            actionButtons += `<button data-pairing-id="${p.id}" class="finish-pairing-btn bg-indigo-600 text-white px-3 py-1 text-sm rounded-md hover:bg-indigo-700">Finish & Report</button>`;
+                            actionButtons += `<button data-pairing-id="${p.id}" class="finish-pairing-btn bg-indigo-600 text-white px-3 py-1 text-sm rounded-md hover:bg-indigo-700 transition">Finish</button>`;
                         }
                         actionButtons += `</div>`;
 
@@ -873,7 +1232,7 @@
                             <div>
                                 <p class="text-sm text-gray-300">Progress: ${workDaysPassed} of ${p.duration} days</p>
                                 <div class="w-full bg-gray-600 rounded-full h-2.5 mt-1">
-                                    <div class="bg-green-500 h-2.5 rounded-full" style="width: ${progress}%"></div>
+                                    <div class="bg-blue-500 h-2.5 rounded-full" style="width: ${progress}%"></div>
                                 </div>
                             </div>
                             <div>
@@ -889,7 +1248,7 @@
                 container.appendChild(regionDiv);
             });
             
-            const allPairingsFinished = pairings.length > 0 && pairings.every(p => p.status === 'Passed' || p.status === 'Failed');
+            const allPairingsFinished = pairings.length > 0 && activePairings.length === 0;
             newGroupBtn.classList.toggle('hidden', !allPairingsFinished);
 
             addDashboardEventListeners();
@@ -930,7 +1289,7 @@
                     populatePairingUI();
                     updateGuideUI();
                     const pairingId = e.currentTarget.dataset.pairingId;
-                    // Wait for the DOM to render the pairing entries before querying
+                    // Wait for DOM to render the pairing entries before querying
                     requestAnimationFrame(() => {
                         const element = document.querySelector(`.pairing-entry[data-trainee-id="${pairingId}"]`);
                         if (element) {
@@ -947,27 +1306,28 @@
                 if (pairing) {
                     pairing.status = newStatus;
                     saveDataToLocal();
-                    renderDashboard();
+                    renderDashboard(); // Re-render removes it from active and puts it in reports
                 }
             };
 
-            document.querySelectorAll('.pass-btn').forEach(btn => btn.addEventListener('click', e => handleStatusChange(e.target.dataset.pairingId, 'Passed')));
-            document.querySelectorAll('.fail-btn').forEach(btn => btn.addEventListener('click', e => handleStatusChange(e.target.dataset.pairingId, 'Failed')));
-            
-            document.querySelectorAll('.finish-pairing-btn').forEach(btn => btn.addEventListener('click', e => {
-                const pairing = pairings.find(p => p.id === e.target.dataset.pairingId);
-                if (pairing && (pairing.status === 'Passed' || pairing.status === 'Failed')) {
-                    generateAndShowReport(e.target.dataset.pairingId);
-                } else {
-                    alert('Please mark the trainee as "Pass" or "Fail" before finishing the pairing.');
+            document.querySelectorAll('.pass-btn').forEach(btn => btn.addEventListener('click', e => {
+                if(confirm('Mark this trainee as PASSED? They will be moved to completed reports.')) {
+                    handleStatusChange(e.target.dataset.pairingId, 'Passed');
                 }
             }));
             
-            // This listener is for the "View Report" button that appears on *completed* cards in the Reports Calendar
-            document.querySelectorAll('.view-report-btn').forEach(btn => btn.addEventListener('click', e => generateAndShowReport(e.target.dataset.pairingId)));
+            document.querySelectorAll('.fail-btn').forEach(btn => btn.addEventListener('click', e => {
+                 if(confirm('Mark this trainee as FAILED? They will be moved to completed reports.')) {
+                    handleStatusChange(e.target.dataset.pairingId, 'Failed');
+                }
+            }));
+            
+            document.querySelectorAll('.finish-pairing-btn').forEach(btn => btn.addEventListener('click', e => {
+                alert('Please mark the trainee as "Pass" or "Fail" using the buttons to finish the pairing.');
+            }));
         };
 
-        // --- MODAL LOGIC ---
+        // --- MODAL LOGIC (ADD TRAINEE) ---
         const handleAddNewTrainee = () => {
             const firstName = document.getElementById('new-trainee-first-name').value.trim();
             const lastName = document.getElementById('new-trainee-last-name').value.trim();
@@ -1058,13 +1418,39 @@
             printWindow.print();
         });
 
-        // --- REPORTS CALENDAR & NEW GROUP LOGIC ---
+        // --- REPORTS CALENDAR & METRICS LOGIC ---
         const renderReportsCalendar = () => {
             const container = document.getElementById('reports-calendar-content');
+            const metricsContainer = document.getElementById('reports-metrics-container');
             const completedPairings = pairings.filter(p => p.status === 'Passed' || p.status === 'Failed');
 
+            // Generate Dashboard Metrics
+            const total = completedPairings.length;
+            const passed = completedPairings.filter(p => p.status === 'Passed').length;
+            const failed = total - passed;
+            const passRate = total === 0 ? 0 : Math.round((passed / total) * 100);
+
+            metricsContainer.innerHTML = `
+                <div class="bg-gray-700 p-4 rounded-lg shadow border border-gray-600 text-center">
+                    <p class="text-3xl font-bold text-white">${total}</p>
+                    <p class="text-xs text-gray-400 uppercase tracking-wide mt-1">Total Trained</p>
+                </div>
+                <div class="bg-gray-700 p-4 rounded-lg shadow border border-gray-600 text-center">
+                    <p class="text-3xl font-bold text-green-400">${passed}</p>
+                    <p class="text-xs text-gray-400 uppercase tracking-wide mt-1">Total Passed</p>
+                </div>
+                <div class="bg-gray-700 p-4 rounded-lg shadow border border-gray-600 text-center">
+                    <p class="text-3xl font-bold text-red-400">${failed}</p>
+                    <p class="text-xs text-gray-400 uppercase tracking-wide mt-1">Total Failed</p>
+                </div>
+                <div class="bg-gray-700 p-4 rounded-lg shadow border border-gray-600 text-center">
+                    <p class="text-3xl font-bold text-blue-400">${passRate}%</p>
+                    <p class="text-xs text-gray-400 uppercase tracking-wide mt-1">Pass Rate</p>
+                </div>
+            `;
+
             if (completedPairings.length === 0) {
-                container.innerHTML = `<p class="text-gray-400 text-center">No completed pairing reports found.</p>`;
+                container.innerHTML = `<p class="text-gray-400 text-center py-8">No completed pairing reports found yet.</p>`;
                 return;
             }
             
@@ -1077,21 +1463,21 @@
 
             Object.keys(reportsByRegion).sort().forEach(region => {
                 const regionDiv = document.createElement('div');
-                regionDiv.innerHTML = `<h3 class="text-xl font-semibold text-purple-300 border-b-2 border-gray-600 pb-2 mb-4">${region} Market</h3>`;
+                regionDiv.innerHTML = `<h3 class="text-xl font-semibold text-purple-300 border-b border-gray-600 pb-2 mb-2">${region} Market</h3>`;
                 
                 const table = document.createElement('table');
-                table.className = 'w-full text-left table-auto';
+                table.className = 'w-full text-left table-auto text-sm';
                 table.innerHTML = `
-                    <thead class="bg-gray-700 text-gray-300">
+                    <thead class="bg-gray-800 text-gray-400 uppercase">
                         <tr>
-                            <th class="p-3">Trainee</th>
+                            <th class="p-3 rounded-tl-lg">Trainee</th>
                             <th class="p-3">Trainer</th>
                             <th class="p-3">End Date</th>
                             <th class="p-3">Status</th>
-                            <th class="p-3 text-right">Action</th>
+                            <th class="p-3 text-right rounded-tr-lg">Action</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>`;
+                    <tbody class="bg-gray-700/50"></tbody>`;
                 
                 const tbody = table.querySelector('tbody');
                 reportsByRegion[region]
@@ -1100,14 +1486,14 @@
                         const endDate = getTrainingDates(p.startDate, p.duration).pop()?.toLocaleDateString() || 'N/A';
                         const statusColor = p.status === 'Passed' ? 'text-green-400' : 'text-red-400';
                         const row = document.createElement('tr');
-                        row.className = 'border-b border-gray-700 hover:bg-gray-600/50';
+                        row.className = 'border-b border-gray-700/50 hover:bg-gray-600 transition';
                         row.innerHTML = `
-                            <td class="p-3">${p.traineeName}</td>
-                            <td class="p-3">${p.trainerName}</td>
-                            <td class="p-3">${endDate}</td>
+                            <td class="p-3 font-medium text-gray-200">${p.traineeName}</td>
+                            <td class="p-3 text-gray-300">${p.trainerName}</td>
+                            <td class="p-3 text-gray-400">${endDate}</td>
                             <td class="p-3 font-bold ${statusColor}">${p.status}</td>
                             <td class="p-3 text-right">
-                                <button data-pairing-id="${p.id}" class="view-report-btn-calendar bg-gray-500 text-white px-3 py-1 text-sm rounded-md hover:bg-gray-600">View Report</button>
+                                <button data-pairing-id="${p.id}" class="view-report-btn-calendar bg-gray-600 text-white px-3 py-1 rounded hover:bg-gray-500 transition">View Report</button>
                             </td>
                         `;
                         tbody.appendChild(row);
@@ -1119,7 +1505,6 @@
 
             document.querySelectorAll('.view-report-btn-calendar').forEach(btn => {
                 btn.addEventListener('click', e => {
-                    reportsCalendarModal.classList.add('hidden');
                     generateAndShowReport(e.target.dataset.pairingId);
                 });
             });
@@ -1135,9 +1520,10 @@
         });
         
         const startNewGroup = () => {
-            if (!confirm('Are you sure you want to start a new group? This will archive all current trainees and return you to the start. Your trainers and completed reports will be saved.')) {
+            if (!confirm('Are you sure you want to start a new group? \n\nThis will archive your finished reports and return you to Step 1 for new trainees. Your trainers list will be saved!')) {
                 return;
             }
+            // Keep completed pairings (reports), flush active ones.
             pairings = pairings.filter(p => p.status === 'Passed' || p.status === 'Failed');
             traineeData = [];
             currentStep = 1;
@@ -1147,7 +1533,6 @@
         };
 
         newGroupBtn.addEventListener('click', startNewGroup);
-
 
         // --- INITIALIZATION ---
         window.onload = () => {
