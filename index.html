@@ -254,9 +254,9 @@
                 </div>
             </div>
 
-            <!-- Navigation Buttons -->
+            <!-- Navigation Buttons (Clear Data correctly removed from here) -->
             <div class="mt-10 flex justify-end items-center">
-                <div>
+                <div class="flex gap-2">
                     <button id="back-btn" class="bg-gray-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-500 transition-colors hidden">Back</button>
                     <button id="next-btn" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors ml-2 hidden">Next</button>
                 </div>
@@ -431,7 +431,10 @@
         const trainerFileInput = document.getElementById('trainer-excel-upload');
         const settingsTrainerFileInput = document.getElementById('settings-trainer-excel');
         const addTrainerBtn = document.getElementById('add-trainer-btn');
+        
+        // Ensure this clear button specifically points to the one in settings
         const clearDataBtn = document.getElementById('clear-data-btn');
+        
         const downloadIcsBtn = document.getElementById('download-ics-btn');
         const chooseUploadBtn = document.getElementById('choose-upload-btn');
         const chooseManualBtn = document.getElementById('choose-manual-btn');
@@ -783,9 +786,9 @@
 
         const extractUniqueRegions = () => {
             const allRegions = new Set();
-            traineeData.forEach(t => allRegions.add(t.region));
-            trainers.forEach(t => allRegions.add(t.region));
-            defaultTrainers.forEach(t => allRegions.add(t.region)); 
+            traineeData.forEach(t => { if(t.region) allRegions.add(t.region); });
+            trainers.forEach(t => { if(t.region) allRegions.add(t.region); });
+            defaultTrainers.forEach(t => { if(t.region) allRegions.add(t.region); }); 
             uniqueRegions = Array.from(allRegions).sort();
 
             // Populate global datalist
@@ -882,6 +885,7 @@
         const saveTrainers = () => {
             saveTrainersFromDOM(document.getElementById('trainers-list'));
             saveTrainersFromDOM(document.getElementById('settings-trainers-list'));
+            extractUniqueRegions(); // Make sure datalist gets any new regions saved
             saveDataToLocal();
             populatePairingUI();
         };
@@ -1383,7 +1387,7 @@
             }));
             
             document.querySelectorAll('.finish-pairing-btn').forEach(btn => btn.addEventListener('click', e => {
-                alert('Please mark the trainee as "Pass" or "Fail" using the buttons to finish the pairing.');
+                alert('This trainee has finished their scheduled days! Please mark them as "Pass" or "Fail" using the buttons to complete the pairing and send it to your Reports.');
             }));
         };
 
